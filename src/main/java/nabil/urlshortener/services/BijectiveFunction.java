@@ -15,6 +15,9 @@ public class BijectiveFunction {
         init();
     }
 
+    /**
+     * Initialize the maps with the base 62 characters
+     * */
     private void init() {
         long index = 0;
         for(char c = 'a'; c <= 'z'; c++) {
@@ -31,6 +34,10 @@ public class BijectiveFunction {
         }
     }
 
+    /**
+     * @param id - long value to be encoded
+     * @return encoded string of the id
+     * */
     public String encode(long id) {
         StringBuilder sb = new StringBuilder();
         while(id > 0) {
@@ -40,9 +47,14 @@ public class BijectiveFunction {
         return sb.reverse().toString();
     }
 
-    public long decode(String s) {
+
+    /**
+     * @param shortUrl- encoded url
+     * @return database id of that shortUrl
+     * */
+    public long decode(String shortUrl) {
         long id = 0;
-        for(char c : s.toCharArray()) {
+        for(char c : shortUrl.toCharArray()) {
             id = id * BASE + charToIndex.get(c);
         }
         return id;
