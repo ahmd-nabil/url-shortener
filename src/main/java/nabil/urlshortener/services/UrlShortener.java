@@ -3,6 +3,7 @@ package nabil.urlshortener.services;
 import static nabil.urlshortener.services.ApplicationUtils.assertAlphaNumeric;
 import static nabil.urlshortener.services.ApplicationUtils.assertLengthLessThanNine;
 import static nabil.urlshortener.services.ApplicationUtils.assertNotEmpty;
+import static nabil.urlshortener.services.ApplicationUtils.assertNotNull;
 
 import java.util.Optional;
 
@@ -24,7 +25,8 @@ public class UrlShortener {
     private final BijectiveFunction bijectiveFunction;
 
     public URLDTO shorten(String longUrl) {
-        assertNotEmpty(longUrl);
+        assertNotNull(longUrl, "URL cannot be null");
+        assertNotEmpty(longUrl, "URL cannot be empty");
         // if longUrl exist in db, return it (no duplicates allowed)
         Optional<URL> foundUrl = this.urlRepository.findByLongUrl(longUrl);
         if(foundUrl.isPresent()) {
@@ -39,9 +41,10 @@ public class UrlShortener {
     }
 
     public String expand(String shortUrl) {
-        assertNotEmpty(shortUrl);
-        assertLengthLessThanNine(shortUrl);
-        assertAlphaNumeric(shortUrl);
+        assertNotNull(shortUrl, "short URL cannot be null.");
+        assertNotEmpty(shortUrl, "short URL cannot be empty.");
+        assertLengthLessThanNine(shortUrl, "short URL is too long.");
+        assertAlphaNumeric(shortUrl, "short URL contains invalid characters.");
 
         Long urlId = bijectiveFunction.decode(shortUrl);
         URL url = this.urlRepository.findById(urlId).orElseThrow(URLNotFoundException::new);
