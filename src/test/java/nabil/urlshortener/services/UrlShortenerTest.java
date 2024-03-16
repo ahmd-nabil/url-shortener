@@ -101,7 +101,7 @@ class UrlShortenerTest {
         String longUrl = null;
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.shorten(longUrl));
+        assertThrows(NullPointerException.class, () -> urlShortener.shorten(longUrl));
     }
     @Test
     public void test_shorten_result_alphanumericShortUrl() {
