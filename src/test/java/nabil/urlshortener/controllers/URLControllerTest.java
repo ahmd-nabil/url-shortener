@@ -49,11 +49,11 @@ class URLControllerTest {
     public void test_shorten_success() throws Exception {
         String longUrl = "longUrl";
         String shortUrl = "shortUrl";
-        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
+        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(URLDTO.builder().longUrl(longUrl).shortUrl(HOST+"/"+shortUrl).build());
 
         mockMvc.perform(post("/").contentType("text/plain").content(longUrl))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.shortUrl").value(HOST + shortUrl));
+                .andExpect(jsonPath("$.shortUrl").value(HOST + "/" + shortUrl));
     }
 
     @Test
@@ -153,10 +153,10 @@ class URLControllerTest {
     public void test_shorten_with_query_parameters() throws Exception {
         String longUrl = "longUrl?param1=value1&param2=value2";
         String shortUrl = "shortUrl";
-        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
+        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(URLDTO.builder().shortUrl(HOST + "/" + shortUrl).longUrl(longUrl).build());
 
         mockMvc.perform(post("/").contentType("text/plain").content(longUrl))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.shortUrl").value(HOST + shortUrl));
+                .andExpect(jsonPath("$.shortUrl").value(HOST +"/"+ shortUrl));
     }
 }

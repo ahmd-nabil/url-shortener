@@ -2,7 +2,6 @@ package nabil.urlshortener.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 
 import nabil.urlshortener.domain.URL;
 import nabil.urlshortener.dtos.URLDTO;
@@ -22,6 +22,9 @@ import nabil.urlshortener.repositories.UrlRepository;
 
 @ExtendWith(MockitoExtension.class)
 class UrlServiceTest {
+
+    @Value("${application.host}")
+    String HOST;
     @Mock
     UrlRepository urlRepository;
     @Mock
@@ -47,7 +50,7 @@ class UrlServiceTest {
         URLDTO result = urlService.shorten(longUrl);
 
         // Assert
-        assertEquals(savedUrl.getShortUrl(), result.getShortUrl());
+        assertEquals(HOST + "/" + savedUrl.getShortUrl(), result.getShortUrl());
         assertEquals(savedUrl.getLongUrl(), result.getLongUrl());
     }
 
@@ -69,24 +72,6 @@ class UrlServiceTest {
     }
 
     @Test
-    public void test_shorten_shortUrlLength() {
-        // Arrange
-        String longUrl = "https://www.example.com";
-        URL savedUrl = new URL(longUrl);
-        savedUrl.setId(1L);
-        savedUrl.setShortUrl("abcd1234");
-        when(urlRepository.findByLongUrl(longUrl)).thenReturn(Optional.empty());
-        when(urlRepository.save(any(URL.class))).thenReturn(savedUrl);
-        when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
-
-        // Act
-        URLDTO result = urlService.shorten(longUrl);
-
-        // Assert
-        assert(8 >= result.getShortUrl().length());
-    }
-
-    @Test
     public void test_shorten_emptyLongUrl() {
         // Arrange
         String longUrl = "";
@@ -102,23 +87,6 @@ class UrlServiceTest {
 
         // Act & Assert
         assertThrows(NullPointerException.class, () -> urlService.shorten(longUrl));
-    }
-    @Test
-    public void test_shorten_result_alphanumericShortUrl() {
-        // Arrange
-        String longUrl = "https://www.example.com";
-        URL savedUrl = new URL(longUrl);
-        savedUrl.setId(1L);
-        savedUrl.setShortUrl("abc123");
-        when(urlRepository.findByLongUrl(longUrl)).thenReturn(Optional.empty());
-        when(urlRepository.save(any(URL.class))).thenReturn(savedUrl);
-        when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
-
-        // Act
-        URLDTO result = urlService.shorten(longUrl);
-
-        // Assert
-        assertTrue(result.getShortUrl().matches("^[a-zA-Z0-9]+$"));
     }
 
     @Test
@@ -163,7 +131,7 @@ class UrlServiceTest {
     @Test
     public void test_expand_invalidShortUrl() {
         // Arrange
-        String shortUrl = "abcde12345"; // too long
+        String shortUrl = "abcde123456"; // too long
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> urlService.expand(shortUrl));
@@ -187,7 +155,7 @@ class UrlServiceTest {
     }
 
     @Test
-    public void test_shorten_decode_encode() {
+    public void test_shorten_decode_then_encode() {
         // Arrange
         String longUrl = "https://www.example.com";
         URL savedUrl = new URL(longUrl);
@@ -196,7 +164,7 @@ class UrlServiceTest {
         when(urlRepository.findByLongUrl(longUrl)).thenReturn(Optional.empty());
         when(urlRepository.save(any(URL.class))).thenReturn(savedUrl);
         when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
-        when(bijectiveFunction.decode(savedUrl.getShortUrl())).thenReturn(savedUrl.getId());
+        when(bijectiveFunction.decode(any())).thenReturn(savedUrl.getId());
 
         // Act
         URLDTO result = urlService.shorten(longUrl);

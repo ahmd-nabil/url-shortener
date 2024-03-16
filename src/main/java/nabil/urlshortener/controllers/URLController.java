@@ -2,7 +2,6 @@ package nabil.urlshortener.controllers;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +21,9 @@ import nabil.urlshortener.services.UrlService;
 public class URLController {
     private final UrlService urlService;
 
-    @Value("${application.host}")
-    public String HOST;
     @PostMapping(consumes = "text/plain", produces = "application/json")
     public ResponseEntity<URLDTO> shorten(@RequestBody String longUrl) {
         URLDTO urldto = urlService.shorten(longUrl);
-        urldto.setShortUrl(HOST + urldto.getShortUrl());
         return ResponseEntity.ok(urldto);
     }
 

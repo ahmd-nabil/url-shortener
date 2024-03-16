@@ -1,13 +1,14 @@
 package nabil.urlshortener.services;
 
 import static nabil.urlshortener.services.ApplicationUtils.assertAlphaNumeric;
-import static nabil.urlshortener.services.ApplicationUtils.assertLengthLessThanNine;
+import static nabil.urlshortener.services.ApplicationUtils.assertLengthLessThanEleven;
 import static nabil.urlshortener.services.ApplicationUtils.assertNotEmpty;
 import static nabil.urlshortener.services.ApplicationUtils.assertNotNull;
 import static nabil.urlshortener.services.ApplicationUtils.assertValidUrl;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import nabil.urlshortener.repositories.UrlRepository;
 @Transactional
 @RequiredArgsConstructor
 public class UrlService {
+    @Value("${application.host}")
+    public String HOST;
 
     private final UrlRepository urlRepository;
     private final BijectiveFunction bijectiveFunction;
@@ -38,14 +41,17 @@ public class UrlService {
         // generate shortUrl from id
         String shortUrl = bijectiveFunction.encode(savedUrl.getId());
         savedUrl.setShortUrl(shortUrl);
-        // return URL object
-        return new URLDTO(savedUrl);
+        // return URL Dto object
+        return URLDTO.builder()
+                .shortUrl(HOST + "/" + shortUrl)
+                .longUrl(longUrl)
+                .build();
     }
 
     public String expand(String shortUrl) {
         assertNotNull(shortUrl, "short URL cannot be null.");
         assertNotEmpty(shortUrl, "short URL cannot be empty.");
-        assertLengthLessThanNine(shortUrl, "short URL is too long.");
+        assertLengthLessThanEleven(shortUrl, "short URL is too long.");
         assertAlphaNumeric(shortUrl, "short URL contains invalid characters.");
 
         Long urlId = bijectiveFunction.decode(shortUrl);
