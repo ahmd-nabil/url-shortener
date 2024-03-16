@@ -25,25 +25,33 @@ This project utilizes Spring Boot along with Spring Data Redis for caching and S
 
 <h2>Setup</h2>
 <ol>
-    <li> Clone this repository to your local machine. 
+<li> Clone this repository to your local machine.
 
-```git clone https://github.com/ahmd-nabil/url-shortener.git```
-    </li>
-    <li> Navigate to the project directory.
+```
+git clone https://github.com/ahmd-nabil/url-shortener.git    
+``` 
+</li>
+<li> Navigate to the project directory.
 
-```cd {url-shortener-path}```
-    </li> 
-    <li>Ensure you have Java and Maven installed on your system.</li>
-    <li>Configure MySQL database settings in <code>application.properties</code> under <code>src/main/resources</code>.</li>
-    <li>Start Redis server either locally or use a cloud service.</li>
-    <li>Build the project using Maven.
+```
+cd {url-shortener-path}
+```
+</li> 
+<li>Ensure you have Java and Maven installed on your system.</li>
+<li>Configure MySQL database settings in <code>application.properties</code> under <code>src/main/resources</code>.</li>
+<li>Start Redis server either locally or use a cloud service.</li>
+<li>Build the project using Maven.
 
-```mvn clean install```
-    </li>
-    <li>Run the application. 
+```
+mvn clean install
+```
+</li>
+<li>Run the application. 
 
-```mvn spring-boot:run```
-    </li>
+```
+mvn spring-boot:run
+```
+</li>
 </ol>
 <h2>Usage</h2>
 <ul>
