@@ -9,6 +9,7 @@ import static nabil.urlshortener.services.ApplicationUtils.assertValidUrl;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,7 @@ public class UrlService {
                 .build();
     }
 
+    @Cacheable(value = "shortUrl")
     public String expand(String shortUrl) {
         assertNotNull(shortUrl, "short URL cannot be null.");
         assertNotEmpty(shortUrl, "short URL cannot be empty.");
