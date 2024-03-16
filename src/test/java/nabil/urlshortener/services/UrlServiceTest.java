@@ -21,13 +21,13 @@ import nabil.urlshortener.exceptions.URLNotFoundException;
 import nabil.urlshortener.repositories.UrlRepository;
 
 @ExtendWith(MockitoExtension.class)
-class UrlShortenerTest {
+class UrlServiceTest {
     @Mock
     UrlRepository urlRepository;
     @Mock
     BijectiveFunction bijectiveFunction;
     @InjectMocks
-    UrlShortener urlShortener;
+    UrlService urlService;
     @BeforeEach
     void setUp() {
     }
@@ -44,7 +44,7 @@ class UrlShortenerTest {
         when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
 
         // Act
-        URLDTO result = urlShortener.shorten(longUrl);
+        URLDTO result = urlService.shorten(longUrl);
 
         // Assert
         assertEquals(savedUrl.getShortUrl(), result.getShortUrl());
@@ -61,7 +61,7 @@ class UrlShortenerTest {
         when(urlRepository.findByLongUrl(longUrl)).thenReturn(Optional.of(existingUrl));
 
         // Act
-        URLDTO result = urlShortener.shorten(longUrl);
+        URLDTO result = urlService.shorten(longUrl);
 
         // Assert
         assertEquals(existingUrl.getShortUrl(), result.getShortUrl());
@@ -80,7 +80,7 @@ class UrlShortenerTest {
         when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
 
         // Act
-        URLDTO result = urlShortener.shorten(longUrl);
+        URLDTO result = urlService.shorten(longUrl);
 
         // Assert
         assert(8 >= result.getShortUrl().length());
@@ -92,7 +92,7 @@ class UrlShortenerTest {
         String longUrl = "";
 
         // Act and Assert
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.shorten(longUrl));
+        assertThrows(IllegalArgumentException.class, () -> urlService.shorten(longUrl));
     }
 
         @Test
@@ -101,7 +101,7 @@ class UrlShortenerTest {
         String longUrl = null;
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> urlShortener.shorten(longUrl));
+        assertThrows(NullPointerException.class, () -> urlService.shorten(longUrl));
     }
     @Test
     public void test_shorten_result_alphanumericShortUrl() {
@@ -115,7 +115,7 @@ class UrlShortenerTest {
         when(bijectiveFunction.encode(savedUrl.getId())).thenReturn(savedUrl.getShortUrl());
 
         // Act
-        URLDTO result = urlShortener.shorten(longUrl);
+        URLDTO result = urlService.shorten(longUrl);
 
         // Assert
         assertTrue(result.getShortUrl().matches("^[a-zA-Z0-9]+$"));
@@ -126,7 +126,7 @@ class UrlShortenerTest {
         // Arrange
         String longUrl = "notValidURL.com";
         // Act
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.shorten(longUrl));
+        assertThrows(IllegalArgumentException.class, () -> urlService.shorten(longUrl));
     }
 
     @Test
@@ -142,7 +142,7 @@ class UrlShortenerTest {
         when(urlRepository.findById(urlId)).thenReturn(Optional.of(url));
 
         // Act
-        String result = urlShortener.expand(shortUrl);
+        String result = urlService.expand(shortUrl);
 
         // Assert
         assertEquals(longUrl, result);
@@ -157,7 +157,7 @@ class UrlShortenerTest {
         when(urlRepository.findById(urlId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(URLNotFoundException.class, () -> urlShortener.expand(shortUrl));
+        assertThrows(URLNotFoundException.class, () -> urlService.expand(shortUrl));
     }
 
     @Test
@@ -166,7 +166,7 @@ class UrlShortenerTest {
         String shortUrl = "abcde12345"; // too long
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.expand(shortUrl));
+        assertThrows(IllegalArgumentException.class, () -> urlService.expand(shortUrl));
     }
 
     @Test
@@ -174,7 +174,7 @@ class UrlShortenerTest {
         // Arrange
         String shortUrl = "abc!@#";
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.expand(shortUrl));
+        assertThrows(IllegalArgumentException.class, () -> urlService.expand(shortUrl));
     }
 
     @Test
@@ -183,7 +183,7 @@ class UrlShortenerTest {
         String shortUrl = "abc+123";
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> urlShortener.expand(shortUrl));
+        assertThrows(IllegalArgumentException.class, () -> urlService.expand(shortUrl));
     }
 
     @Test
@@ -199,7 +199,7 @@ class UrlShortenerTest {
         when(bijectiveFunction.decode(savedUrl.getShortUrl())).thenReturn(savedUrl.getId());
 
         // Act
-        URLDTO result = urlShortener.shorten(longUrl);
+        URLDTO result = urlService.shorten(longUrl);
         long decodedId = bijectiveFunction.decode(result.getShortUrl());
 
         // Assert

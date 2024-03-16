@@ -20,7 +20,7 @@ import nabil.urlshortener.repositories.UrlRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UrlShortener {
+public class UrlService {
 
     private final UrlRepository urlRepository;
     private final BijectiveFunction bijectiveFunction;

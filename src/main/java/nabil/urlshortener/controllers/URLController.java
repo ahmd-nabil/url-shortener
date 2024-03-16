@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import nabil.urlshortener.dtos.URLDTO;
-import nabil.urlshortener.services.UrlShortener;
+import nabil.urlshortener.services.UrlService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping()
 public class URLController {
-    private final UrlShortener urlShortener;
+    private final UrlService urlService;
 
     @Value("${application.host}")
     public String HOST;
     @PostMapping(consumes = "text/plain", produces = "application/json")
     public ResponseEntity<URLDTO> shorten(@RequestBody String longUrl) {
-        URLDTO urldto = urlShortener.shorten(longUrl);
+        URLDTO urldto = urlService.shorten(longUrl);
         urldto.setShortUrl(HOST + urldto.getShortUrl());
         return ResponseEntity.ok(urldto);
     }
@@ -34,7 +34,7 @@ public class URLController {
 
     @GetMapping("/{shortURL}")
     public ResponseEntity<Void> redirect(@PathVariable String shortURL) {
-        String longUrl = urlShortener.expand(shortURL);
+        String longUrl = urlService.expand(shortURL);
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(URI.create(longUrl))

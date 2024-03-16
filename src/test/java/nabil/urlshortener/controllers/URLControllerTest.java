@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import nabil.urlshortener.dtos.URLDTO;
 import nabil.urlshortener.exceptions.URLNotFoundException;
-import nabil.urlshortener.services.UrlShortener;
+import nabil.urlshortener.services.UrlService;
 
 @WebMvcTest(URLController.class)
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +39,7 @@ class URLControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    UrlShortener urlShortener;
+    UrlService urlService;
 
     @BeforeEach
     void setUp() {
@@ -49,7 +49,7 @@ class URLControllerTest {
     public void test_shorten_success() throws Exception {
         String longUrl = "longUrl";
         String shortUrl = "shortUrl";
-        BDDMockito.when(urlShortener.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
+        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
 
         mockMvc.perform(post("/").contentType("text/plain").content(longUrl))
                 .andExpect(status().isOk())
@@ -60,7 +60,7 @@ class URLControllerTest {
     public void test_redirect_success() throws Exception {
         String shortUrl = "shortUrl";
         String longUrl = "longUrl";
-        BDDMockito.when(urlShortener.expand(shortUrl)).thenReturn(longUrl);
+        BDDMockito.when(urlService.expand(shortUrl)).thenReturn(longUrl);
 
         mockMvc.perform(get("/{shortURL}", shortUrl))
                 .andExpect(status().isFound())
@@ -70,7 +70,7 @@ class URLControllerTest {
     @Test
     public void test_redirect_returns_404_when_shortUrl_not_found() throws Exception {
         String shortUrl = "brandNew";
-        BDDMockito.when(urlShortener.expand(shortUrl)).thenThrow(URLNotFoundException.class);
+        BDDMockito.when(urlService.expand(shortUrl)).thenThrow(URLNotFoundException.class);
 
         mockMvc.perform(get("/{shortURL}", shortUrl))
                 .andExpect(status().isNotFound());
@@ -87,7 +87,7 @@ class URLControllerTest {
     @Test
     public void test_shorten_invalid_url() throws Exception {
         String longUrl = "invalidUrl";
-        BDDMockito.when(urlShortener.shorten(longUrl)).thenThrow(new IllegalArgumentException());
+        BDDMockito.when(urlService.shorten(longUrl)).thenThrow(new IllegalArgumentException());
         mockMvc.perform(post("/").contentType("text/plain").content(longUrl))
                 .andExpect(status().isBadRequest());
     }
@@ -95,7 +95,7 @@ class URLControllerTest {
     @Test
     public void test_expand_invalid_short_url() throws Exception {
         String shortUrl = "tooLongShortURL";
-        BDDMockito.when(urlShortener.expand(shortUrl)).thenThrow(IllegalArgumentException.class);
+        BDDMockito.when(urlService.expand(shortUrl)).thenThrow(IllegalArgumentException.class);
         mockMvc.perform(get("/{shortUrl}", shortUrl))
                 .andExpect(status().isBadRequest());
     }
@@ -104,7 +104,7 @@ class URLControllerTest {
     @Test
     public void test_expand_valid_short_url_not_found() throws Exception {
         String shortUrl = "validShortUrl";
-        BDDMockito.when(urlShortener.expand(shortUrl)).thenThrow(URLNotFoundException.class);
+        BDDMockito.when(urlService.expand(shortUrl)).thenThrow(URLNotFoundException.class);
 
         mockMvc.perform(get("/{shortURL}", shortUrl))
                 .andExpect(status().isNotFound());
@@ -134,7 +134,7 @@ class URLControllerTest {
     public void test_expand_concurrent_requests() throws Exception {
         String shortUrl = "shortUrl";
         String longUrl = "longUrl";
-        BDDMockito.when(urlShortener.expand(shortUrl)).thenReturn(longUrl);
+        BDDMockito.when(urlService.expand(shortUrl)).thenReturn(longUrl);
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         List<Callable<ResultActions>> tasks = new ArrayList<>();
@@ -153,7 +153,7 @@ class URLControllerTest {
     public void test_shorten_with_query_parameters() throws Exception {
         String longUrl = "longUrl?param1=value1&param2=value2";
         String shortUrl = "shortUrl";
-        BDDMockito.when(urlShortener.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
+        BDDMockito.when(urlService.shorten(longUrl)).thenReturn(new URLDTO(longUrl, shortUrl));
 
         mockMvc.perform(post("/").contentType("text/plain").content(longUrl))
                 .andExpect(status().isOk())
