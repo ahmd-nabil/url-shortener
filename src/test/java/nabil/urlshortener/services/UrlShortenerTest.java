@@ -122,6 +122,14 @@ class UrlShortenerTest {
     }
 
     @Test
+    public void test_shorten_invalid_url_throws_400_bad_request() {
+        // Arrange
+        String longUrl = "notValidURL.com";
+        // Act
+        assertThrows(IllegalArgumentException.class, () -> urlShortener.shorten(longUrl));
+    }
+
+    @Test
     public void test_expand_validShortUrl() {
         // Arrange
         String shortUrl = "abc123";

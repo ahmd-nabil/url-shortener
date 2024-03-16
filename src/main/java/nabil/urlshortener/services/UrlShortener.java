@@ -4,6 +4,7 @@ import static nabil.urlshortener.services.ApplicationUtils.assertAlphaNumeric;
 import static nabil.urlshortener.services.ApplicationUtils.assertLengthLessThanNine;
 import static nabil.urlshortener.services.ApplicationUtils.assertNotEmpty;
 import static nabil.urlshortener.services.ApplicationUtils.assertNotNull;
+import static nabil.urlshortener.services.ApplicationUtils.assertValidUrl;
 
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class UrlShortener {
     public URLDTO shorten(String longUrl) {
         assertNotNull(longUrl, "URL cannot be null");
         assertNotEmpty(longUrl, "URL cannot be empty");
+        assertValidUrl(longUrl, "URL is invalid");
         // if longUrl exist in db, return it (no duplicates allowed)
         Optional<URL> foundUrl = this.urlRepository.findByLongUrl(longUrl);
         if(foundUrl.isPresent()) {
