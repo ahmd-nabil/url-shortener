@@ -11,6 +11,7 @@ This project utilizes Spring Boot along with Spring Data Redis for caching and S
     <li>Efficient caching using Redis for improved performance.</li>
     <li>MySQL integration for persistent storage of URLs.</li>
     <li>Built with a RESTful API for easy integration with other applications.</li>
+    <li>OpenAPI(Swagger) for api docs.</li>
     <li>Includes Lombok for reducing boilerplate code.</li>
 </ul>
 
@@ -55,9 +56,9 @@ mvn spring-boot:run
 </ol>
 <h2>Usage</h2>
 <ul>
-    <li>Access the application through the provided endpoints to shorten URLs and retrieve original ones.</li>
-    <li>Use tools like cURL, Postman, or any HTTP client to interact with the RESTful API.</li>
-    <li>Monitor Redis cache for caching efficiency and database for storing URLs.</li>
+    <li>Access the application through the provided [endpoints](http://localhost:8080/swagger-ui/index.html) to shorten URLs and retrieve original ones.</li>
+<li>Use tools like cURL, Postman, or any HTTP client to interact with the RESTful API.</li>
+<li>Monitor Redis cache for caching efficiency and database for storing URLs.</li>
 </ul>
 
 <h2>Contributing</h2><p>Contributions are welcome (with no rules)! Feel free to open issues for any bugs, feature requests, or improvements. Pull requests are also appreciated.</p>
